@@ -8,6 +8,7 @@ class Login extends Component {
   state = {
     username: '',
     password: '',
+    error: ''
   }
   service = new UserService();
 
@@ -20,13 +21,18 @@ class Login extends Component {
         this.setState({
           username: '',
           password: '',
+          error: ''
         })
+        this.props.history.push('/login')
         this.props.logTheUserIntoAppComponent(userFromDb);
         // console.log(this.state.username, this.state.password);        
 
 
       })
       .catch((err) => {
+        this.setState({
+          error: "invalid username or password"
+        })
         console.log('sorry something went wrong', err);
       })
   }
@@ -56,6 +62,7 @@ class Login extends Component {
           <input type='text' name='password' placeholder="put in your password" value={this.state.password} onChange={e => this.changeTheInputText(e)} /><br />
           <input type="submit" value="login" />
         </form>
+        <p className="errorStyle">{this.state.error}</p>
       </div>
     )
   }

@@ -61,6 +61,7 @@ class App extends Component {
 
 
       this.setState({loggedInUser: userToLogIn })
+      // this.history.push('/');
     // console.log('this is after',this.state.loggedInUser)
 
   }
@@ -119,6 +120,8 @@ class App extends Component {
           <Route path="/items/details/:id" component={itemDetails} />
 
           <Route path="/user/login" render={props => <Login {...props} logTheUserIntoAppComponent={this.logInTheUser} />} />
+
+
 
           <Route path="/user/signup" render={props => <Signup {...props} logTheUserIntoAppComponent={this.logInTheUser} />} />
         </Switch>

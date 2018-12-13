@@ -8,7 +8,8 @@ class Signup extends Component {
   state = {
     username: '',
     password: '',
-    companyName: ''
+    companyName: '',
+    error: ''
   }
   service = new UserService();
 
@@ -17,18 +18,23 @@ class Signup extends Component {
 
     this.service.signup(this.state.username, this.state.password, this.state.companyName)
       .then((userFromDB) => {
+        this.setState({ username: '', password: '', companyName: '', error: '' });
         // console.log('------------------------', userFromDB);
-        this.props.logTheUserIntoAppComponent(userFromDB);
         // here we wait for the API to give us the user object back after logging in
+        this.props.logTheUserIntoAppComponent(userFromDB);
+        this.props.history.push('/')
         // then we pass that user object back to app component
-        this.setState({ username: '', password: '', companyName: '' });
+       
 
         // this.props.history.push('/user');
 
 
       })
       .catch((err) => {
-        console.log('sorry something went wrong', err);
+        this.setState({
+          error: "Please insert a valid username and password"
+        })
+        console.log(err);
 
       })
   }
@@ -59,6 +65,7 @@ class Signup extends Component {
           <input type='text' name='companyName' placeholder="Company Name" value={this.state.companyName} onChange={e => this.changeTheInputText(e)} /><br />
           <button type="submit">formSubmit function</button>
         </form>
+        <p className="errorStyle">{this.state.error}</p>
       </div>
     )
   }

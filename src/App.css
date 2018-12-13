@@ -50,3 +50,8 @@
 .descriptionBox{
   border: 3px solid purple;
 }
+.errorStyle{
+  color: red;
+  font-weight: bolder;
+  padding: 5px;
+}

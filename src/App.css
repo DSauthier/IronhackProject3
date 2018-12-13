@@ -7,6 +7,7 @@
   height: 40vmin;
 }
 
+
 .App-header {
   background-color: #282c34;
   min-height: 100vh;
@@ -48,4 +49,9 @@
 }
 .descriptionBox{
   border: 3px solid purple;
+}
+.errorStyle{
+  color: red;
+  font-weight: bolder;
+  padding: 5px;
 }

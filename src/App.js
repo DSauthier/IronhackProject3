@@ -3,11 +3,14 @@ import logo from './logo.svg';
 import './App.css';
 import { Route, Switch, Link } from 'react-router-dom';
 
+import NavbarComponent from "./components/Navbar";
 import ItemIndex from "./components/itemIndex";
 import itemDetails from "./components/itemDetails";
 import Signup from "./components/Signup";
 import UserService from "./services/UserService";
 import Login from "./components/Login";
+import EmployeeList from "./components/EmployeeList";
+import FindEmployee from "./components/EmployeeDetail"
 
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -18,80 +21,113 @@ library.add(faStroopwafel);
 library.add(faPen);
 
 
+
 class App extends Component {
   state = {
-    loggedInUser: null
+    loggedInUser: null,
   }
-  service = new UserService()
+
+  service = new UserService();
 
 
+  componentDidMount(props){
+    this.fetchUser();
+  }
 
-  fetchUser() {
-    if (this.state.loggedInUser === null) {
+
+  fetchUser(){
+    if( this.state.loggedInUser === null ){
       this.service.loggedin()
-        .then(theActualUserFromDB => {
-          this.setState({
-            loggedInUser: theActualUserFromDB
-          })
+      .then(theActualUserFromDB =>{
+        this.setState({
+          loggedInUser:  theActualUserFromDB
+        }) 
 
-        })
-        .catch(err => {
-          this.setState({
-            loggedInUser: false
-          })
-        })
+      })
+      .catch( err =>{
+        console.log('catch getting hit', err)
+        this.setState({
+          loggedInUser:  false
+        }) 
+      })
     }
   }
-
-
 
   logInTheUser = (userToLogIn) => {
-    this.setState({ logInTheUser: userToLogIn })
+    console.log('=--=-=-=-=-=',userToLogIn)
+    if(!userToLogIn){
+  this.setState({loggedInUser: null})
+}
+
+
+      this.setState({loggedInUser: userToLogIn })
+      // this.history.push('/');
+    // console.log('this is after',this.state.loggedInUser)
+
   }
 
+  showUser = () =>{
+    if(this.state.loggedInUser){
+      // console.log('you are logged in', this.state.loggedInUser)
+      return(
+        <h4>Welcome, {this.state.loggedInUser.username}</h4>)
+    }else{
+          return(
+            <div className="applicationInfoDiv">
+             
+              <div className="paragraphAboutApp">
+               
+                <h1>Welcome</h1>
+                <p className="paragraphAboutAppText">
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                </p>
+              </div>
+            </div>
 
-
-  showUser = () => {
-    if (this.state.loggedInUser) {
-      return (
-        <div>Welcome, {this.state.loggedInUser.username}</div>
-      )
+          )
+      
+      
     }
   }
 
+  // hideHeader = () =>{
+  //   this.setState({
+  //     showHeader: false,
 
-  logout = () => {
-    this.service.logout().then(() => {
-      this.setState({ loggedInUser: null });
+  //   })
+  // }
+
+  logout = () =>{
+    this.service.logout().then(()=>{
+      this.setState({loggedInUser: null});
+      console.log('you triggered the logout function', this.state.loggedInUser);
     })
   }
+
   render() {
     return <div className="App">
-          <nav>
-            <ul>
-              <li>
-            <Link to="/itemList"> View Items List</Link>
-            </li>
-            <li>
-            <Link to="/signup"> Sign Up For Account</Link>
-            </li>
-            <li> 
-            <Link to="/login"> Login </Link>
-              </li>
-            </ul>
-          </nav>
+        <NavbarComponent logUserOut={this.logout} loggedIn={this.state.loggedInUser} />
+        {this.showUser()}
 
-
-{/* -=-=-=-=-= ROUTES ROOM   =-=--=-=-=-=*/}
+        {/* -=-=-=-=-= ROUTES ROOM   =-=--=-=-=-=*/}
         <Switch>
-          <Route path="/itemList" render={props => <ItemIndex {...props} currentUser ={this.state.loggedInUser} />} />
-        <Route path="/items/details/:id" component={itemDetails} />
-          
-          <Route path="/signup" render={(props) => <Signup {...props}/>} />
-        <Route path="/login" render={(props) => <Login {...props}/> }/>
+          <Route path="/itemList" render={props => <ItemIndex {...props} currentUser={this.state.loggedInUser} />} />
+
+          <Route path="/employeeList" render={props => <EmployeeList {...props} currentUser={this.state.loggedInUser} />} />
+
+          <Route path="/findingEmployee" render={props => <FindEmployee {...props} currentUser={this.state.loggedInUser} />} />
+
+          <Route path="/items/details/:id" component={itemDetails} />
+
+          <Route path="/user/login" render={props => <Login {...props} logTheUserIntoAppComponent={this.logInTheUser} />} />
+
+
+
+          <Route path="/user/signup" render={props => <Signup {...props} logTheUserIntoAppComponent={this.logInTheUser} />} />
         </Switch>
- {/* -==--==--=-=ROUTES ROOM ENDS -=-==--=-=-= */}
+        {/* -==--==--=-=ROUTES ROOM ENDS -=-==--=-=-= */}
       </div>;
+
   }
 }
 
